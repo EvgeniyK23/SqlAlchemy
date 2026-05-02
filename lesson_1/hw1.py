@@ -431,4 +431,5 @@ add_equl()
 with open('hw1.txt', 'w', encoding='utf-8') as f_out:
     for i in result_to_write_file:
         f_out.write(i)
+        f_out.write('\n')
         print(i)
