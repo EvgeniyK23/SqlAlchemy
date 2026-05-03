@@ -14,3 +14,8 @@ quote-style = "single"
 [tool.ruff.lint]
 select = ["E", "F", "I", "W", "B"]
 ignore = ["W291"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.12",
+]
