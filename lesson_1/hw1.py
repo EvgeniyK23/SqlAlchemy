@@ -88,10 +88,16 @@ available	INTEGER	    DEFAULT 1	                Доступна ли книга
 import sqlite3
 
 # список с результатами работы
-result_to_write_file = [f'{'='*79}', f'{'ДОМАШНЕЕ ЗАДАНИЕ: БИБЛИОТЕКА':^79}', f'{'='*79}']
+result_to_write_file = [
+    f'{"=" * 79}',
+    f'{"ДОМАШНЕЕ ЗАДАНИЕ: БИБЛИОТЕКА":^79}',
+    f'{"=" * 79}',
+]
+
 
 def add_equl():
-    result_to_write_file.append(f'{'='*79}')
+    result_to_write_file.append(f'{"=" * 79}')
+
 
 # Создание таблицы
 conn = sqlite3.connect('library.db')
@@ -114,16 +120,18 @@ cursor.execute(create_table_sql)
 conn.commit()
 
 add_equl()
-result_to_write_file.append(f'Задание 1: Создание таблицы')
+result_to_write_file.append('Задание 1: Создание таблицы')
 add_equl()
 
-result_to_write_file.append(f"✓ Таблица 'books' успешно создана")
-result_to_write_file.append(f"✓ Проверка пройдена: таблица существует в базе данных")
+result_to_write_file.append("✓ Таблица 'books' успешно создана")
+result_to_write_file.append(
+    '✓ Проверка пройдена: таблица существует в базе данных'
+)
 
 
 # Заполнение таблицы
 add_equl()
-result_to_write_file.append(f'Задание 2: Заполнение таблицы данными')
+result_to_write_file.append('Задание 2: Заполнение таблицы данными')
 add_equl()
 
 insert_many_sql = """
@@ -152,56 +160,63 @@ VALUES
 cursor.execute(insert_many_sql)
 conn.commit()
 
-result_to_write_file.append(f"✓ Добавлено книг:{cursor.rowcount}")
+result_to_write_file.append(f'✓ Добавлено книг:{cursor.rowcount}')
 temp = cursor.execute('SELECT COUNT(*) FROM BOOKS')
-result_to_write_file.append(f"✓ Всего книг в таблице: {temp.fetchone()[0]}")
+result_to_write_file.append(f'✓ Всего книг в таблице: {temp.fetchone()[0]}')
 all_books = cursor.execute("""SELECT COUNT(*) FROM BOOKS""").fetchone()[0]
 
 # Простые select-запросы
 add_equl()
-result_to_write_file.append(f'Задание 3: Простые SELECT-запросы')
+result_to_write_file.append('Задание 3: Простые SELECT-запросы')
 add_equl()
 
 # все книги
-result_to_write_file.append(f'\n--- Все книги (полная информация) ---')
-select_all_books = "SELECT * FROM BOOKS;"
+result_to_write_file.append('\n--- Все книги (полная информация) ---')
+select_all_books = 'SELECT * FROM BOOKS;'
 cursor.execute(select_all_books)
 for row in cursor:
-    result_to_write_file.append(f"ID: {row[0]}, "
-                                f"{row[1]} {row[2]}, "
-                                f"{row[3]}, {row[4]}, "
-                                f"{row[5]}, {row[6]}, "
-                                f"{'доступна' if row[7] else 'выдана'}")
+    result_to_write_file.append(
+        f'ID: {row[0]}, '
+        f'{row[1]} {row[2]}, '
+        f'{row[3]}, {row[4]}, '
+        f'{row[5]}, {row[6]}, '
+        f'{"доступна" if row[7] else "выдана"}'
+    )
 
 # название и авторы
-result_to_write_file.append(f'\n--- Название и авторы ---')
-select_title_author = "SELECT title, author FROM BOOKS;"
+result_to_write_file.append('\n--- Название и авторы ---')
+select_title_author = 'SELECT title, author FROM BOOKS;'
 cursor.execute(select_title_author)
 for row in cursor:
-    result_to_write_file.append(f"«{row[0]}» — {row[1]}")
+    result_to_write_file.append(f'«{row[0]}» — {row[1]}')
 
 # количество книг
-result_to_write_file.append(f'\n--- Количество книг ---')
-select_number_books = "SELECT COUNT(*) FROM BOOKS;"
+result_to_write_file.append('\n--- Количество книг ---')
+select_number_books = 'SELECT COUNT(*) FROM BOOKS;'
 cursor.execute(select_number_books)
-result_to_write_file.append(f'Всего книг в библиотеке: {cursor.fetchone()[0]}\n')
+result_to_write_file.append(
+    f'Всего книг в библиотеке: {cursor.fetchone()[0]}\n'
+)
 
 # Фильтрация с WHERE
 add_equl()
-result_to_write_file.append(f'Задание 4: Фильтрация с WHERE')
+result_to_write_file.append('Задание 4: Фильтрация с WHERE')
 add_equl()
 
 # книги Льва Толстого
-result_to_write_file.append(f'\n--- Книги Льва Толстого ---')
+result_to_write_file.append('\n--- Книги Льва Толстого ---')
 select_lev_tolstiy_books = """SELECT * 
                             FROM BOOKS
                             WHERE author = 'Лев Толстой';"""
 cursor.execute(select_lev_tolstiy_books)
 for row in cursor:
-    result_to_write_file.append(f'"{row[1]}" ({row[3]}), {row[5]} стр. - {"доступна" if row[7] == 1 else "выдана" }')
+    result_to_write_file.append(
+        f'"{row[1]}" ({row[3]}), {row[5]} стр. - '
+        f'{"доступна" if row[7] == 1 else "выдана"}'
+    )
 
 # книги, изданные после 1900 года
-result_to_write_file.append(f'\n--- Книги после 1900 года ---')
+result_to_write_file.append('\n--- Книги после 1900 года ---')
 select_books_after_1900 = """SELECT year, title, author
                             FROM BOOKS
                             WHERE year >= 1900
@@ -211,7 +226,7 @@ for row in cursor:
     result_to_write_file.append(f'{row[0]}: «{row[1]}» — {row[2]}')
 
 # доступные книги
-result_to_write_file.append(f'\n--- Доступные книги ---')
+result_to_write_file.append('\n--- Доступные книги ---')
 select_books_available = """SELECT title, author
                             FROM BOOKS
                             WHERE available = 1;"""
@@ -220,7 +235,7 @@ for row in cursor:
     result_to_write_file.append(f'«{row[0]}» — {row[1]}')
 
 # роман более 400 стр
-result_to_write_file.append(f'\n--- Романы с количеством страниц > 400 ---')
+result_to_write_file.append('\n--- Романы с количеством страниц > 400 ---')
 select_novel_pages_more400 = """SELECT title, author, pages
                             FROM BOOKS
                             WHERE genre = 'Роман' and pages >= 400;"""
@@ -229,7 +244,7 @@ for row in cursor:
     result_to_write_file.append(f'«{row[0]}» — {row[1]}, {row[2]} стр.')
 
 # книги Булгакова или Достоевского
-result_to_write_file.append(f'\n--- Книги Булгакова или Достоевского ---')
+result_to_write_file.append('\n--- Книги Булгакова или Достоевского ---')
 select_books_bul_dost = """SELECT author, title, year
                             FROM BOOKS
                             WHERE author like '%Булгаков%'
@@ -238,15 +253,15 @@ select_books_bul_dost = """SELECT author, title, year
 cursor.execute(select_books_bul_dost)
 for row in cursor:
     result_to_write_file.append(f'{row[0]}: «{row[1]}», ({row[2]})')
-result_to_write_file.append(f'\n')
+result_to_write_file.append('\n')
 
 # Сортировка и ограничения
 add_equl()
-result_to_write_file.append(f'Задание 5: Сортировка и ограничения')
+result_to_write_file.append('Задание 5: Сортировка и ограничения')
 add_equl()
 
 # топ 3 самых толстых книг
-result_to_write_file.append(f'\n--- Топ-3 самых толстых книг ---')
+result_to_write_file.append('\n--- Топ-3 самых толстых книг ---')
 select_top3_fat_books = """SELECT title, author, pages
                             FROM BOOKS
                             ORDER BY pages DESC
@@ -254,11 +269,13 @@ select_top3_fat_books = """SELECT title, author, pages
 cursor.execute(select_top3_fat_books)
 start = 1
 for row in cursor:
-    result_to_write_file.append(f'{start}. «{row[0]}» — {row[1]}, {row[2]} стр.')
+    result_to_write_file.append(
+        f'{start}. «{row[0]}» — {row[1]}, {row[2]} стр.'
+    )
     start += 1
 
 # топ 3 самых старых книг
-result_to_write_file.append(f'\n--- Топ-3 самых старых книг ---')
+result_to_write_file.append('\n--- Топ-3 самых старых книг ---')
 select_top3_oldest_books = """SELECT title, author, year
                             FROM BOOKS
                             ORDER BY year
@@ -270,7 +287,9 @@ for row in cursor:
     start += 1
 
 # книги, отсортированные по автору, по году
-result_to_write_file.append(f'\n--- Все книги (сортировка: по автору, затем по году) ---\n')
+result_to_write_file.append(
+    '\n--- Все книги (сортировка: по автору, затем по году) ---\n'
+)
 
 select_all_group_author = """SELECT author, COUNT(*)
                              FROM BOOKS
@@ -289,44 +308,53 @@ start = 0
 for i in range(len(authors_count)):
     result_to_write_file.append(f'{authors_count[i][0]}:')
     for _ in range(authors_count[i][1]):
-        result_to_write_file.append(f'{authors_year_title[start][0]} — «{authors_year_title[start][1]}»')
+        result_to_write_file.append(
+            f'{authors_year_title[start][0]} — '
+            f'«{authors_year_title[start][1]}»'
+        )
         start += 1
-    result_to_write_file.append(f'\n')
+    result_to_write_file.append('\n')
 
 # Обновление данных
 add_equl()
-result_to_write_file.append(f'Задание 6: Обновление данных')
+result_to_write_file.append('Задание 6: Обновление данных')
 add_equl()
 
 # установка available = 0 для ISBN
-result_to_write_file.append(f'\n--- Выдача книги по ISBN ---')
-update_isbn_books = '''UPDATE BOOKS
+result_to_write_file.append('\n--- Выдача книги по ISBN ---')
+update_isbn_books = """UPDATE BOOKS
                        SET available = 0
-                       WHERE isbn = "978-5-17-135043-1";'''
+                       WHERE isbn = "978-5-17-135043-1";"""
 
 cursor.execute(update_isbn_books)
 conn.commit()
-result_to_write_file.append(f'✓ Книга выдана. Обновлено записей: {cursor.rowcount}')
+result_to_write_file.append(
+    f'✓ Книга выдана. Обновлено записей: {cursor.rowcount}'
+)
 
 # установка available = 1 для Анны Карениной
-result_to_write_file.append(f"\n--- Возврат книги 'Анна Каренина' ---")
-update_anna_karenina = '''UPDATE BOOKS
+result_to_write_file.append("\n--- Возврат книги 'Анна Каренина' ---")
+update_anna_karenina = """UPDATE BOOKS
                        SET available = 1
-                       WHERE title like "%Анна Каренина%";'''
+                       WHERE title like "%Анна Каренина%";"""
 
 cursor.execute(update_anna_karenina)
 conn.commit()
-result_to_write_file.append(f'✓ Книга возвращена. Обновлено записей: {cursor.rowcount}')
+result_to_write_file.append(
+    f'✓ Книга возвращена. Обновлено записей: {cursor.rowcount}'
+)
 
 # увеличение страниц у толстого
-result_to_write_file.append(f"\n--- Увеличение страниц у книг Льва Толстого ---")
+result_to_write_file.append(
+    '\n--- Увеличение страниц у книг Льва Толстого ---'
+)
 
 before_after_update = """SELECT title, pages
                    FROM BOOKS
                    WHERE author like '%Лев Толстой%';"""
 
 cursor.execute(before_after_update)
-result_to_write_file.append(f'  До обновления:')
+result_to_write_file.append('  До обновления:')
 for row in cursor:
     result_to_write_file.append(f'    «{row[0]}»: {row[1]} стр.')
 
@@ -338,19 +366,21 @@ conn.commit()
 result_to_write_file.append(f'  ✓ Обновлено записей: {cursor.rowcount}')
 
 cursor.execute(before_after_update)
-result_to_write_file.append(f'  После обновления:')
+result_to_write_file.append('  После обновления:')
 for row in cursor:
     result_to_write_file.append(f'    «{row[0]}»: {row[1]} стр.')
 
 # все книги до 1900 недоступны
-result_to_write_file.append(f"\n--- Книги до 1900 года помечаются как недоступные ---")
+result_to_write_file.append(
+    '\n--- Книги до 1900 года помечаются как недоступные ---'
+)
 
 select_books_before_1900 = """SELECT year, title, author
                    FROM BOOKS
                    WHERE year <= 1900;"""
 
 cursor.execute(select_books_before_1900)
-result_to_write_file.append(f'  Книги до 1900 года:')
+result_to_write_file.append('  Книги до 1900 года:')
 for row in cursor:
     result_to_write_file.append(f'    {row[0]}: «{row[1]}» — {row[2]}')
 
@@ -359,19 +389,23 @@ update_books_before_1900 = """UPDATE BOOKS
                        WHERE year <= 1900;"""
 cursor.execute(update_books_before_1900)
 conn.commit()
-result_to_write_file.append(f'  ✓ Помечено как недоступные: {cursor.rowcount} книг')
-result_to_write_file.append(f'\n')
+result_to_write_file.append(
+    f'  ✓ Помечено как недоступные: {cursor.rowcount} книг'
+)
+result_to_write_file.append('\n')
 
 # Удаление данных
 add_equl()
-result_to_write_file.append(f'Задание 7: Удаление данных')
+result_to_write_file.append('Задание 7: Удаление данных')
 add_equl()
 
 # удаление всех книг с available = 0
 cursor.execute('SELECT COUNT(*) FROM BOOKS')
-result_to_write_file.append(f'Всего книг в библиотеке до удаления: {cursor.fetchone()[0]}')
-result_to_write_file.append(f"\n--- Удаление книг, которых нет в наличии ---")
-result_to_write_file.append(f"  Будут удалены:")
+result_to_write_file.append(
+    f'Всего книг в библиотеке до удаления: {cursor.fetchone()[0]}'
+)
+result_to_write_file.append('\n--- Удаление книг, которых нет в наличии ---')
+result_to_write_file.append('  Будут удалены:')
 select_book_eq_0 = """SELECT title, author
                       FROM BOOKS
                       WHERE available = 0"""
@@ -386,7 +420,9 @@ conn.commit()
 result_to_write_file.append(f'✓ Удалено книг: {cursor.rowcount}')
 
 # удаление всех книг в которых станиц меньше 100
-result_to_write_file.append(f"\n--- Удаление книг с количеством страниц < 100 ---")
+result_to_write_file.append(
+    '\n--- Удаление книг с количеством страниц < 100 ---'
+)
 select_book_pages_100 = """SELECT title, author, pages
                       FROM BOOKS
                       WHERE pages < 100"""
@@ -401,7 +437,7 @@ conn.commit()
 result_to_write_file.append(f'  ✓ Удалено книг: {cursor.rowcount}')
 
 # удаление всех книг с жанром сказка
-result_to_write_file.append(f"\n--- Удаление книг с жанром 'Сказка' ---")
+result_to_write_file.append("\n--- Удаление книг с жанром 'Сказка' ---")
 
 delete_genre = """DELETE FROM BOOKS
                 WHERE genre like '%Сказка%';"""
@@ -410,22 +446,26 @@ conn.commit()
 result_to_write_file.append(f'  ✓ Удалено книг: {cursor.rowcount}')
 
 # итог
-result_to_write_file.append(f"\n--- Итог ---")
+result_to_write_file.append('\n--- Итог ---')
 select_last_book = """SELECT COUNT(*) FROM BOOKS"""
 cursor.execute(select_last_book)
 last_book = cursor.fetchone()[0]
-result_to_write_file.append(f"Книг осталось в библиотеке: {last_book}")
-result_to_write_file.append(f"Удалено всего: {int(all_books) - int(last_book)}\n")
+result_to_write_file.append(f'Книг осталось в библиотеке: {last_book}')
+result_to_write_file.append(
+    f'Удалено всего: {int(all_books) - int(last_book)}\n'
+)
 
-result_to_write_file.append(f"Оставшиеся книги:")
+result_to_write_file.append('Оставшиеся книги:')
 cursor.execute("""SELECT title, author, available
                   FROM BOOKS;""")
 for row in cursor:
-    result_to_write_file.append(f'    «{row[0]}» — {row[1]} - {"доступна" if row[2] else "недоступна"}')
+    result_to_write_file.append(
+        f'    «{row[0]}» — {row[1]} - {"доступна" if row[2] else "недоступна"}'
+    )
 
 # Конец
 add_equl()
-result_to_write_file.append(f"{'ВСЕ ЗАДАНИЯ ВЫПОЛНЕНЫ':^79}")
+result_to_write_file.append(f'{"ВСЕ ЗАДАНИЯ ВЫПОЛНЕНЫ":^79}')
 add_equl()
 
 with open('hw1.txt', 'w', encoding='utf-8') as f_out:
