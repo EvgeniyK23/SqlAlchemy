@@ -189,8 +189,19 @@ result.txt
 """
 
 import os
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, \
-    ForeignKey, insert, select, func, text
+
+from sqlalchemy import (
+    Column,
+    ForeignKey,
+    Integer,
+    MetaData,
+    String,
+    Table,
+    create_engine,
+    func,
+    insert,
+    select,
+)
 
 results = []
 
@@ -202,8 +213,7 @@ def save_results_to_file(filename: str = 'my_result.txt'):
 
 
 def compare_results(
-        my_file: str = 'my_result.txt',
-        expected_file: str = 'result.txt'
+    my_file: str = 'my_result.txt', expected_file: str = 'result.txt'
 ):
     print('\n' + '=' * 60)
     print('🔍 СРАВНЕНИЕ РЕЗУЛЬТАТОВ С ЭТАЛОНОМ')
@@ -268,7 +278,7 @@ def create_tables(engine, metadata):
         Column('isbn', String, unique=True),
         Column('pages', Integer, default=0),
         Column('genre', String),
-        Column('available', Integer, default=1)
+        Column('available', Integer, default=1),
     )
 
     users_table = Table(
@@ -277,7 +287,7 @@ def create_tables(engine, metadata):
         Column('id', Integer, primary_key=True),
         Column('name', String(30), nullable=False, unique=True),
         Column('fullname', String(50)),
-        Column('book_id', Integer, ForeignKey('books.id'), nullable=False)
+        Column('book_id', Integer, ForeignKey('books.id'), nullable=False),
     )
 
     metadata.create_all(engine)
@@ -290,11 +300,12 @@ def insert_books(engine, data_books, books_table):
 
     with engine.connect() as conn:
         conn.execute(books_table.delete())
-        # conn.execute(text("DELETE FROM sqlite_sequence WHERE name='books_table'"))
         conn.commit()
 
     with engine.connect() as con:
-        stmt = insert(books_table).values(data_books).returning(books_table.c.id)
+        stmt = (
+            insert(books_table).values(data_books).returning(books_table.c.id)
+        )
         result = con.execute(stmt)
         add_section('2.1. Добавление книг')
         results.append(f'Добавлено книг: {len(result.all())}')
@@ -306,7 +317,6 @@ def insert_users(engine, data_users, users_table):
 
     with engine.connect() as conn:
         conn.execute(users_table.delete())
-        # conn.execute(text("DELETE FROM sqlite_sequence WHERE name='users'"))
         conn.commit()
 
     with engine.connect() as con:
@@ -339,14 +349,17 @@ def execute_queries(engine, books_table, users_table):
             results.append(str(i))
 
         add_section("3.4. Авторы с буквой 'э'")
-        stmt = select(books_table).where(func.lower(books_table.c.author).contains('э'))
+        stmt = select(books_table).where(
+            func.lower(books_table.c.author).contains('э')
+        )
         result = con.execute(stmt).fetchall()
         for i in result:
             results.append(str(i))
 
         add_section('3.5. Доступные книги, год которых меньше 1900')
-        stmt = select(books_table).where((books_table.c.year < 1900)&
-                                                 (books_table.c.available == 1))
+        stmt = select(books_table).where(
+            (books_table.c.year < 1900) & (books_table.c.available == 1)
+        )
         result = con.execute(stmt).fetchall()
         for i in result:
             results.append(str(i))
@@ -363,149 +376,131 @@ def execute_queries(engine, books_table, users_table):
             users_table.c.name,
             users_table.c.fullname,
             books_table.c.title,
-            books_table.c.author
+            books_table.c.author,
         ).select_from(
-            users_table.join(books_table,
-                             users_table.c.book_id == books_table.c.id)
+            users_table.join(
+                books_table, users_table.c.book_id == books_table.c.id
+            )
         )
         result = con.execute(stmt).fetchall()
         for i in result:
-            results.append(f"{i.name}: ({i.fullname}) -> '{i.title}' - {i.author}")
+            results.append(
+                f"{i.name}: ({i.fullname}) -> '{i.title}' - {i.author}"
+            )
 
 
 def main():
     # Создаем движок и метаданные
-    engine = create_engine('sqlite:///bookstore.db',
-                           echo=True)
+    engine = create_engine('sqlite:///bookstore.db', echo=True)
 
     metadata = MetaData()
 
     # Создание таблиц
-    books, users= create_tables(engine, metadata)
+    books, users = create_tables(engine, metadata)
 
     # Вставка книг
     data_books = [
         {
-            "title": "Мастер и Маргарита",
-            "author": "Михаил Булгаков",
-            "year": 1967,
-            "isbn": "978-5-17-135043-1",
-            "pages": 480,
-            "genre": "Роман",
-            "available": 1
+            'title': 'Мастер и Маргарита',
+            'author': 'Михаил Булгаков',
+            'year': 1967,
+            'isbn': '978-5-17-135043-1',
+            'pages': 480,
+            'genre': 'Роман',
+            'available': 1,
         },
         {
-            "title": "Преступление и наказание",
-            "author": "Федор Достоевский",
-            "year": 1866,
-            "isbn": "978-5-04-116633-9",
-            "pages": 672,
-            "genre": "Роман",
-            "available": 1
+            'title': 'Преступление и наказание',
+            'author': 'Федор Достоевский',
+            'year': 1866,
+            'isbn': '978-5-04-116633-9',
+            'pages': 672,
+            'genre': 'Роман',
+            'available': 1,
         },
         {
-            "title": "1984",
-            "author": "Джордж Оруэлл",
-            "year": 1949,
-            "isbn": "978-5-17-137262-4",
-            "pages": 320,
-            "genre": "Антиутопия",
-            "available": 1
+            'title': '1984',
+            'author': 'Джордж Оруэлл',
+            'year': 1949,
+            'isbn': '978-5-17-137262-4',
+            'pages': 320,
+            'genre': 'Антиутопия',
+            'available': 1,
         },
         {
-            "title": "Убить пересмешника",
-            "author": "Харпер Ли",
-            "year": 1960,
-            "isbn": "978-5-04-116631-5",
-            "pages": 416,
-            "genre": "Роман",
-            "available": 0
+            'title': 'Убить пересмешника',
+            'author': 'Харпер Ли',
+            'year': 1960,
+            'isbn': '978-5-04-116631-5',
+            'pages': 416,
+            'genre': 'Роман',
+            'available': 0,
         },
         {
-            "title": "Война и мир. Том 1",
-            "author": "Лев Толстой",
-            "year": 1867,
-            "isbn": "978-5-17-135042-4",
-            "pages": 720,
-            "genre": "Роман-эпопея",
-            "available": 1
+            'title': 'Война и мир. Том 1',
+            'author': 'Лев Толстой',
+            'year': 1867,
+            'isbn': '978-5-17-135042-4',
+            'pages': 720,
+            'genre': 'Роман-эпопея',
+            'available': 1,
         },
         {
-            "title": "Анна Каренина",
-            "author": "Лев Толстой",
-            "year": 1877,
-            "isbn": "978-5-04-116632-2",
-            "pages": 864,
-            "genre": "Роман",
-            "available": 0
+            'title': 'Анна Каренина',
+            'author': 'Лев Толстой',
+            'year': 1877,
+            'isbn': '978-5-04-116632-2',
+            'pages': 864,
+            'genre': 'Роман',
+            'available': 0,
         },
         {
-            "title": "Собачье сердце",
-            "author": "Михаил Булгаков",
-            "year": 1925,
-            "isbn": "978-5-17-135044-8",
-            "pages": 352,
-            "genre": "Повесть",
-            "available": 1
+            'title': 'Собачье сердце',
+            'author': 'Михаил Булгаков',
+            'year': 1925,
+            'isbn': '978-5-17-135044-8',
+            'pages': 352,
+            'genre': 'Повесть',
+            'available': 1,
         },
         {
-            "title": "Маленький принц",
-            "author": "Антуан де Сент-Экзюпери",
-            "year": 1943,
-            "isbn": "978-5-04-116634-6",
-            "pages": 96,
-            "genre": "Сказка",
-            "available": 1
+            'title': 'Маленький принц',
+            'author': 'Антуан де Сент-Экзюпери',
+            'year': 1943,
+            'isbn': '978-5-04-116634-6',
+            'pages': 96,
+            'genre': 'Сказка',
+            'available': 1,
         },
         {
-            "title": "Три товарища",
-            "author": "Эрих Мария Ремарк",
-            "year": 1936,
-            "isbn": "978-5-17-137263-1",
-            "pages": 384,
-            "genre": "Роман",
-            "available": 1
+            'title': 'Три товарища',
+            'author': 'Эрих Мария Ремарк',
+            'year': 1936,
+            'isbn': '978-5-17-137263-1',
+            'pages': 384,
+            'genre': 'Роман',
+            'available': 1,
         },
         {
-            "title": "Портрет Дориана Грея",
-            "author": "Оскар Уайльд",
-            "year": 1890,
-            "isbn": "978-5-04-116635-3",
-            "pages": 320,
-            "genre": "Роман",
-            "available": 0
-        }
+            'title': 'Портрет Дориана Грея',
+            'author': 'Оскар Уайльд',
+            'year': 1890,
+            'isbn': '978-5-04-116635-3',
+            'pages': 320,
+            'genre': 'Роман',
+            'available': 0,
+        },
     ]
 
     insert_books(engine, data_books, books)
 
     # Вставка пользователей
     data_users = [
-        {
-            "name": "alice",
-            "fullname": "Alice Wonderland",
-            "book_id": 1
-        },
-        {
-            "name": "bob",
-            "fullname": "Bob Builder",
-            "book_id": 3
-        },
-        {
-            "name": "charlie",
-            "fullname": "Charlie Brown",
-            "book_id": 2
-        },
-        {
-            "name": "diana",
-            "fullname": "Diana Princess",
-            "book_id": 7
-        },
-        {
-            "name": "eve",
-            "fullname": "Eve Smith",
-            "book_id": 5
-        }
+        {'name': 'alice', 'fullname': 'Alice Wonderland', 'book_id': 1},
+        {'name': 'bob', 'fullname': 'Bob Builder', 'book_id': 3},
+        {'name': 'charlie', 'fullname': 'Charlie Brown', 'book_id': 2},
+        {'name': 'diana', 'fullname': 'Diana Princess', 'book_id': 7},
+        {'name': 'eve', 'fullname': 'Eve Smith', 'book_id': 5},
     ]
 
     insert_users(engine, data_users, users)
