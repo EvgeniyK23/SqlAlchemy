@@ -324,7 +324,6 @@ def fill_tables(engine, books, users):
         # Очищаем таблицы
         conn.execute(books.delete())
         conn.execute(users.delete())
-        # conn.commit()
 
         data_books = [
             {
@@ -430,7 +429,6 @@ def fill_tables(engine, books, users):
         stmt = insert(books).values(data_books).returning(books.c.id)
         result = conn.execute(stmt)
         results.append(f'Добавлено книг: {len(result.all())}')
-        # conn.commit()
 
         data_users = [
             {'name': 'ivan', 'fullname': 'Иван Петров', 'book_id': 1},
@@ -452,12 +450,11 @@ def fill_tables(engine, books, users):
         ]
         result = conn.execute(insert(users).values(data_users))
         results.append(f'Добавлено пользователей: {result.rowcount}')
-        # conn.commit()
 
 
 def run_queries(engine, books, users):
     """Задание 3. Запросы"""
-    with engine.begin() as conn:
+    with engine.connect() as conn:
         add_section('3.1 Доступные книги с ценой меньше 1000 рублей')
         stmt = select(books).where(
             and_(books.c.price < 1000, books.c.available == 1)
@@ -558,8 +555,9 @@ def run_queries(engine, books, users):
             results.append(
                 f'{i[0]}: {i.cnt} книг, средняя цена {i.average:.2f} руб.'
             )
+        conn.commit()
 
-    with engine.connect() as conn:
+    with engine.begin() as conn:
         add_section('3.9 Обновление цен (книги Толстого +10%)')
         stmt = (
             update(books)
@@ -570,9 +568,9 @@ def run_queries(engine, books, users):
         result = conn.execute(stmt).fetchall()
         for i in result:
             results.append(f'ID {i[0]}: {i[1]} - новая цена {i[2]} руб.')
-        conn.commit()
 
-    with engine.connect() as conn:
+
+    with engine.begin() as conn:
         add_section('3.10 Удаление книг с отрицательным годом')
         stmt = (
             delete(books)
@@ -582,7 +580,6 @@ def run_queries(engine, books, users):
         result = conn.execute(stmt).fetchall()
         for i in result:
             results.append(f'ID {i[0]}: {i[1]} ({i[2]} год)')
-        conn.commit()
 
 
 # Основная функция
