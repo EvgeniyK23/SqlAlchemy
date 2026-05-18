@@ -217,5 +217,7 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-.txt
-.db
+#.txt
+#.db
+lesson_1/*
+lesson_2/*
