@@ -271,11 +271,11 @@ class Book(Base):
     __tablename__ = 'Book'
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(nullable=False)
-    author: Mapped[str] = mapped_column(nullable=False)
-    year: Mapped[int]
-    isbn: Mapped[str] = mapped_column(unique=True)
+    author: Mapped[str]
+    year: Mapped[int | None]
+    isbn: Mapped[str | None]
     pages: Mapped[int] = mapped_column(default=0)
-    genre: Mapped[str]
+    genre: Mapped[str | None]
     available: Mapped[int] = mapped_column(default=1)
 
     def __repr__(self):
@@ -294,9 +294,9 @@ class Book(Base):
 class User(Base):
     __tablename__ = 'User'
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(30), nullable=False, unique=True)
-    fullname: Mapped[str] = mapped_column(String(50))
-    book_id: Mapped[int] = mapped_column(ForeignKey('Book.id'), nullable=False)
+    name: Mapped[str] = mapped_column(String(30), unique=True)
+    fullname: Mapped[str | None] = mapped_column(String(50))
+    book_id: Mapped[int] = mapped_column(ForeignKey('Book.id'))
 
     def __repr__(self):
         return (
