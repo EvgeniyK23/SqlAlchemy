@@ -270,7 +270,7 @@ class Base(DeclarativeBase):
 class Book(Base):
     __tablename__ = 'Book'
     id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str] = mapped_column(nullable=False)
+    title: Mapped[str]
     author: Mapped[str]
     year: Mapped[int | None]
     isbn: Mapped[str | None]
