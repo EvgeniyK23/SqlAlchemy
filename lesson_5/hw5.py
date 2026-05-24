@@ -422,9 +422,9 @@ class Book(Base):
     author: Mapped[str]
     year: Mapped[int | None]
     isbn: Mapped[str | None] = mapped_column(unique=True)
-    pages: Mapped[int | None] = mapped_column(default=0)
+    pages: Mapped[int] = mapped_column(default=0)
     genre: Mapped[str | None]
-    count: Mapped[int | None] = mapped_column(default=1)
+    count: Mapped[int] = mapped_column(default=1)
     price: Mapped[float] = mapped_column(default=0)
     users: Mapped[list['UserBookAssociation']] = relationship(
         back_populates='book',
