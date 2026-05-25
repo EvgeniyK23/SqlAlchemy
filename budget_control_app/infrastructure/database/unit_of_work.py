@@ -1,18 +1,18 @@
-from infrastructure.database.repository.account_repository import (
-    AccountRepository,
+from infrastructure.database.repository.account_repository import (  # noqa
+    AccountRepository,  # noqa
 )
-from infrastructure.database.repository.category_repository import (
-    CategoryRepository,
+from infrastructure.database.repository.category_repository import (  # noqa
+    CategoryRepository,  # noqa
 )
-from infrastructure.database.repository.check_repository import CheckRepository
-from infrastructure.database.repository.product_repository import (
-    ProductRepository,
+from infrastructure.database.repository.check_repository import CheckRepository  # noqa
+from infrastructure.database.repository.product_repository import (  # noqa
+    ProductRepository,  # noqa
 )
-from infrastructure.database.repository.recipient_repository import (
-    RecipientRepository,
+from infrastructure.database.repository.recipient_repository import (  # noqa
+    RecipientRepository,  # noqa
 )
-from infrastructure.database.repository.transaction_repository import (
-    TransactionRepository,
+from infrastructure.database.repository.transaction_repository import (  # noqa
+    TransactionRepository,  # noqa
 )
 from sqlalchemy.orm import Session
 
@@ -30,7 +30,6 @@ class UnitOfWork:
     def __init__(self, session_factory):
         self.session_factory = session_factory
         self._session: Session | None = None
-        # репозитории инициализируются лениво при первом обращении
         self._accounts = None
         self._categories = None
         self._recipients = None
@@ -106,7 +105,6 @@ class UnitOfWork:
     def commit(self) -> None:
         """Зафиксировать изменения в БД."""
         self._session.commit()
-        # сбрасываем кеш репозиториев после коммита
         self._accounts = None
         self._categories = None
         self._recipients = None

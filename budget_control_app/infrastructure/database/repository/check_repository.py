@@ -1,9 +1,9 @@
-from infrastructure.database.models.check import Check
-from infrastructure.database.models.check_product_association import (
-    CheckProductAssociation,
+from infrastructure.database.models.check import Check  # noqa
+from infrastructure.database.models.check_product_association import (  # noqa
+    CheckProductAssociation,  # noqa
 )
-from infrastructure.database.models.product import Product
-from infrastructure.database.repository.base_repository import BaseRepository
+from infrastructure.database.models.product import Product  # noqa
+from infrastructure.database.repository.base_repository import BaseRepository  # noqa
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 

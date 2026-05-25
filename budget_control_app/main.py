@@ -20,9 +20,6 @@ from service.budget_service import BudgetService
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-# ──────────────────────────────────────────
-# Настройка движка
-# ──────────────────────────────────────────
 engine = create_engine('sqlite+pysqlite:///budget.db', echo=False)
 Session = sessionmaker(bind=engine)
 

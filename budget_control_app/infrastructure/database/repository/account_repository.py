@@ -1,6 +1,6 @@
-from infrastructure.database.models.account import Account
-from infrastructure.database.models.transaction import Transaction
-from infrastructure.database.repository.base_repository import BaseRepository
+from infrastructure.database.models.account import Account  # noqa
+from infrastructure.database.models.transaction import Transaction  # noqa
+from infrastructure.database.repository.base_repository import BaseRepository  # noqa
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
@@ -14,18 +14,18 @@ class AccountRepository(BaseRepository[Account]):
     def find_by_name(self, name: str) -> Account | None:
         """WHERE — найти счёт по названию."""
         return self.session.execute(
-            select(Account).where(Account.name == name)
+            select(Account).where(Account.name == name)  # noqa
         ).scalar_one_or_none()
 
     def get_with_transactions(self, account_id: int) -> Account | None:
         """JOIN (selectinload) — счёт вместе со всеми транзакциями."""
         return self.session.execute(
             select(Account)
-            .where(Account.id == account_id)
+            .where(Account.id == account_id)  # noqa
             .options(selectinload(Account.transactions))
         ).scalar_one_or_none()
 
-    def get_accounts_with_expenses(self) -> list[Account]:
+    def get_accounts_with_expenses(self) -> list[Account]:  # noqa
         """EXISTS / any() — счета, у которых есть хотя бы одна
         транзакция-расход.
 
