@@ -1,4 +1,4 @@
-from infrastructure.database.base import Base   # noqa
+from infrastructure.database.base import Base  # noqa
 from sqlalchemy import Index, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 

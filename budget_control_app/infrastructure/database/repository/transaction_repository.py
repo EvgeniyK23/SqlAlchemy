@@ -4,7 +4,9 @@ from infrastructure.database.models.account import Account  # noqa
 from infrastructure.database.models.category import Category  # noqa
 from infrastructure.database.models.recipient import Recipient  # noqa
 from infrastructure.database.models.transaction import Transaction  # noqa
-from infrastructure.database.repository.base_repository import BaseRepository  # noqa
+from infrastructure.database.repository.base_repository import (
+    BaseRepository,  # noqa
+)
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload
 

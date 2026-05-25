@@ -45,30 +45,22 @@ def seed(service: BudgetService, uow: UnitOfWork) -> None:
     """Создаём все тестовые данные одной транзакцией."""
 
     # — Счета —
-    cash = service.create_account('Наличные', 'cash',
-                                  balance=5_000)
-    card = service.create_account('Карта Сбербанк', 'card',
-                                  balance=45_000)
+    cash = service.create_account('Наличные', 'cash', balance=5_000)
+    card = service.create_account('Карта Сбербанк', 'card', balance=45_000)
     savings = service.create_account(
         'Накопительный', 'deposit', balance=100_000
     )
 
     # — Категории расходов —
-    cat_food = service.create_category('Еда',
-                                       'expense')
-    cat_trans = service.create_category('Транспорт',
-                                        'expense')
-    cat_ent = service.create_category('Развлечения',
-                                      'expense')
+    cat_food = service.create_category('Еда', 'expense')
+    cat_trans = service.create_category('Транспорт', 'expense')
+    cat_ent = service.create_category('Развлечения', 'expense')
     cat_util = service.create_category('ЖКХ', 'expense')
-    cat_health = service.create_category('Здоровье',
-                                         'expense')
+    cat_health = service.create_category('Здоровье', 'expense')
 
     # — Категории доходов —
-    cat_salary = service.create_category('Зарплата',
-                                         'income')
-    cat_freelance = service.create_category('Фриланс',
-                                            'income')
+    cat_salary = service.create_category('Зарплата', 'income')
+    cat_freelance = service.create_category('Фриланс', 'income')
 
     # — Получатели —
     rec_pyat = service.create_recipient(
@@ -283,8 +275,7 @@ def demo(uow: UnitOfWork) -> None:
     service = BudgetService(uow)
 
     # ── Запрос 1: WHERE ──────────────────────────────────────────────────
-    header('ЗАПРОС 1 — WHERE: расходы за период (01.04–30.04.2024)',
-           '📅')
+    header('ЗАПРОС 1 — WHERE: расходы за период (01.04–30.04.2024)', '📅')
     print("  SQL: SELECT ... FROM transaction WHERE type='expense'")
     print(
         "       AND date BETWEEN '2024-04-01' AND '2024-04-30' ORDER BY "
@@ -305,8 +296,7 @@ def demo(uow: UnitOfWork) -> None:
         )
 
     # ── Запрос 2: GROUP BY + ORDER BY ────────────────────────────────────
-    header('ЗАПРОС 2 — GROUP BY + ORDER BY: сводка по категориям',
-           '📊')
+    header('ЗАПРОС 2 — GROUP BY + ORDER BY: сводка по категориям', '📊')
     print('  SQL: SELECT category.name, SUM(amount), COUNT(id)')
     print(
         '       FROM transaction JOIN category ... GROUP BY category.id '
@@ -325,8 +315,7 @@ def demo(uow: UnitOfWork) -> None:
 
     # ── Запрос 3: JOIN ───────────────────────────────────────────────────
     header(
-        'ЗАПРОС 3 — JOIN: транзакции со счётом, категорией и получателем',
-        '🔗'
+        'ЗАПРОС 3 — JOIN: транзакции со счётом, категорией и получателем', '🔗'
     )
     print('  SQL: SELECT t.*, a.name, c.name, r.name FROM transaction t')
     print(
@@ -351,8 +340,7 @@ def demo(uow: UnitOfWork) -> None:
 
     # ── Запрос 4: EXISTS / any() ─────────────────────────────────────────
     header(
-        'ЗАПРОС 4 — EXISTS (any): категории с хотя бы одной транзакцией',
-        '✅'
+        'ЗАПРОС 4 — EXISTS (any): категории с хотя бы одной транзакцией', '✅'
     )
     print('  SQL: SELECT * FROM category WHERE EXISTS')
     print(
@@ -370,8 +358,7 @@ def demo(uow: UnitOfWork) -> None:
         print(f'  ✔  {c.name} ({c.type})')
 
     # ── Запрос 5: GROUP BY + JOIN (топ получателей) ───────────────────────
-    header('ЗАПРОС 5 — GROUP BY + JOIN: топ получателей по сумме',
-           '👥')
+    header('ЗАПРОС 5 — GROUP BY + JOIN: топ получателей по сумме', '👥')
     print('  SQL: SELECT r.name, COUNT(t.id), SUM(t.amount) FROM recipient r')
     print(
         '       JOIN transaction t ON ... GROUP BY r.id '
@@ -388,8 +375,7 @@ def demo(uow: UnitOfWork) -> None:
         )
 
     # ── Запрос 6: GROUP BY + JOIN (чеки с суммами) ────────────────────────
-    header('ЗАПРОС 6 — GROUP BY + JOIN: чеки с итоговыми суммами',
-           '🧾')
+    header('ЗАПРОС 6 — GROUP BY + JOIN: чеки с итоговыми суммами', '🧾')
     print(
         '  SQL: SELECT r.store_name, COUNT(ri.product_id), '
         'SUM(ri.quantity * ri.price)'
@@ -412,8 +398,7 @@ def demo(uow: UnitOfWork) -> None:
         )
 
     # ── Запрос 7: GROUP BY + ORDER BY (топ товаров) ───────────────────────
-    header('ЗАПРОС 7 — GROUP BY + ORDER BY: топ покупаемых товаров',
-           '🛒')
+    header('ЗАПРОС 7 — GROUP BY + ORDER BY: топ покупаемых товаров', '🛒')
     print(
         '  SQL: SELECT p.name, COUNT(ri.check_id), SUM(ri.quantity), '
         'AVG(ri.price)'
@@ -436,8 +421,7 @@ def demo(uow: UnitOfWork) -> None:
         )
 
     # ── Запрос 8: EXISTS (has) ────────────────────────────────────────────
-    header('ЗАПРОС 8 — EXISTS (has): транзакции с расходной категорией',
-           '🔍')
+    header('ЗАПРОС 8 — EXISTS (has): транзакции с расходной категорией', '🔍')
     print('  SQL: SELECT * FROM transaction WHERE EXISTS')
     print(
         '       (SELECT 1 FROM category WHERE '
@@ -454,8 +438,7 @@ def demo(uow: UnitOfWork) -> None:
 
     # ── Запрос 9: WHERE + HAVING ──────────────────────────────────────────
     header(
-        'ЗАПРОС 9 — WHERE + HAVING: категории расходов суммой > 3000₽',
-        '💸'
+        'ЗАПРОС 9 — WHERE + HAVING: категории расходов суммой > 3000₽', '💸'
     )
     print(
         '  SQL: SELECT c.name, SUM(t.amount) FROM category c '

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from infrastructure.database.models.account import Account   # noqa
+from infrastructure.database.models.account import Account  # noqa
 from infrastructure.database.models.category import Category  # noqa
 from infrastructure.database.models.check import Check  # noqa
 from infrastructure.database.models.check_product_association import (  # noqa
