@@ -1,10 +1,11 @@
-from sqlalchemy import func, select
-from sqlalchemy.orm import Session, selectinload
-
 from infrastructure.database.models.check import Check
-from infrastructure.database.models.check_product_association import CheckProductAssociation
+from infrastructure.database.models.check_product_association import (
+    CheckProductAssociation,
+)
 from infrastructure.database.models.product import Product
 from infrastructure.database.repository.base_repository import BaseRepository
+from sqlalchemy import func, select
+from sqlalchemy.orm import Session, selectinload
 
 
 class CheckRepository(BaseRepository[Check]):
@@ -19,7 +20,9 @@ class CheckRepository(BaseRepository[Check]):
             select(Check)
             .where(Check.id == check_id)
             .options(
-                selectinload(Check.items).selectinload(CheckProductAssociation.product)
+                selectinload(Check.items).selectinload(
+                    CheckProductAssociation.product
+                )
             )
         ).scalar_one_or_none()
 
@@ -33,18 +36,32 @@ class CheckRepository(BaseRepository[Check]):
                 Check.id,
                 Check.store_name,
                 Check.purchased_at,
-                func.count(CheckProductAssociation.product_id).label('items_count'),
-                func.sum(CheckProductAssociation.quantity * CheckProductAssociation.price).label('total'),
+                func.count(CheckProductAssociation.product_id).label(
+                    'items_count'
+                ),
+                func.sum(
+                    CheckProductAssociation.quantity
+                    * CheckProductAssociation.price
+                ).label('total'),
             )
-            .join(CheckProductAssociation, CheckProductAssociation.check_id == Check.id)
+            .join(
+                CheckProductAssociation,
+                CheckProductAssociation.check_id == Check.id,
+            )
             .group_by(Check.id, Check.store_name, Check.purchased_at)
-            .order_by(func.sum(CheckProductAssociation.quantity * CheckProductAssociation.price).desc())
+            .order_by(
+                func.sum(
+                    CheckProductAssociation.quantity
+                    * CheckProductAssociation.price
+                ).desc()
+            )
         ).all()
 
     def find_by_store(self, store_name: str) -> list[Check]:
         """WHERE — найти чеки по названию магазина."""
         return (
-            self.session.execute(
+            self.session
+            .execute(
                 select(Check)
                 .where(Check.store_name.ilike(f'%{store_name}%'))
                 .order_by(Check.purchased_at.desc())
@@ -63,7 +80,10 @@ class CheckRepository(BaseRepository[Check]):
                 CheckProductAssociation.quantity,
                 CheckProductAssociation.price,
             )
-            .join(CheckProductAssociation, CheckProductAssociation.check_id == Check.id)
+            .join(
+                CheckProductAssociation,
+                CheckProductAssociation.check_id == Check.id,
+            )
             .join(Product, Product.id == CheckProductAssociation.product_id)
             .where(Product.name.ilike(f'%{product_name}%'))
             .order_by(Check.purchased_at.desc())

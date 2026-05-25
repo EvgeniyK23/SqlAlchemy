@@ -1,9 +1,8 @@
 from datetime import datetime
 
+from infrastructure.database.base import Base  # noqa
 from sqlalchemy import DateTime, ForeignKey, Index, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from infrastructure.database.base import Base
 
 
 class Transaction(Base):
@@ -19,16 +18,20 @@ class Transaction(Base):
         ForeignKey('recipient.id', ondelete='SET NULL'), nullable=True
     )
     amount: Mapped[float]
-    type: Mapped[str] = mapped_column(String(10))    # income / expense / transfer
+    type: Mapped[str] = mapped_column(
+        String(10)
+    )  # income / expense / transfer
     date: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     comment: Mapped[str | None] = mapped_column(String(255))
 
-    account: Mapped['Account'] = relationship(back_populates='transactions')
-    category: Mapped['Category'] = relationship(back_populates='transactions')
-    recipient: Mapped['Recipient | None'] = relationship(back_populates='transactions')
+    account: Mapped['Account'] = relationship(back_populates='transactions')  # noqa
+    category: Mapped['Category'] = relationship(back_populates='transactions')  # noqa
+    recipient: Mapped['Recipient | None'] = relationship(  # noqa
+        back_populates='transactions'
+    )
 
     # many-to-many с Check через TransactionCheck
-    check_links: Mapped[list['TransactionCheck']] = relationship(
+    check_links: Mapped[list['TransactionCheck']] = relationship(  # noqa
         back_populates='transaction',
         cascade='all, delete-orphan',
     )

@@ -1,9 +1,8 @@
-from sqlalchemy import func, select
-from sqlalchemy.orm import Session
-
 from infrastructure.database.models.category import Category
 from infrastructure.database.models.transaction import Transaction
 from infrastructure.database.repository.base_repository import BaseRepository
+from sqlalchemy import func, select
+from sqlalchemy.orm import Session
 
 
 class CategoryRepository(BaseRepository[Category]):
@@ -15,9 +14,8 @@ class CategoryRepository(BaseRepository[Category]):
     def find_by_type(self, category_type: str) -> list[Category]:
         """WHERE — найти категории по типу (income / expense)."""
         return (
-            self.session.execute(
-                select(Category).where(Category.type == category_type)
-            )
+            self.session
+            .execute(select(Category).where(Category.type == category_type))
             .scalars()
             .all()
         )
@@ -41,11 +39,11 @@ class CategoryRepository(BaseRepository[Category]):
         ).all()
 
     def get_categories_with_transactions(self) -> list[Category]:
-        """EXISTS / any() — категории, у которых есть хотя бы одна транзакция."""
+        """EXISTS / any() — категории, у которых есть хотя бы
+        одна транзакция."""
         return (
-            self.session.execute(
-                select(Category).where(Category.transactions.any())
-            )
+            self.session
+            .execute(select(Category).where(Category.transactions.any()))
             .scalars()
             .all()
         )

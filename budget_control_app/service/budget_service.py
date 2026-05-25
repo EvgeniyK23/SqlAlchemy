@@ -2,12 +2,16 @@ from datetime import datetime
 
 from infrastructure.database.models.account import Account
 from infrastructure.database.models.category import Category
-from infrastructure.database.models.product import Product
 from infrastructure.database.models.check import Check
-from infrastructure.database.models.check_product_association import CheckProductAssociation
+from infrastructure.database.models.check_product_association import (
+    CheckProductAssociation,
+)
+from infrastructure.database.models.product import Product
 from infrastructure.database.models.recipient import Recipient
 from infrastructure.database.models.transaction import Transaction
-from infrastructure.database.models.transaction_check_association import TransactionCheck
+from infrastructure.database.models.transaction_check_association import (
+    TransactionCheck,
+)
 from infrastructure.database.unit_of_work import UnitOfWork
 
 
@@ -25,7 +29,9 @@ class BudgetService:
     # Счета
     # ──────────────────────────────────────────
 
-    def create_account(self, name: str, account_type: str, balance: float = 0.0) -> Account:
+    def create_account(
+        self, name: str, account_type: str, balance: float = 0.0
+    ) -> Account:
         """Создать новый счёт."""
         existing = self.uow.accounts.find_by_name(name)
         if existing:
@@ -48,7 +54,9 @@ class BudgetService:
     # Получатели
     # ──────────────────────────────────────────
 
-    def create_recipient(self, name: str, phone: str = None, note: str = None) -> Recipient:
+    def create_recipient(
+        self, name: str, phone: str = None, note: str = None
+    ) -> Recipient:
         """Зарегистрировать получателя перевода."""
         recipient = Recipient(name=name, phone=phone, note=note)
         self.uow.recipients.add(recipient)
@@ -106,7 +114,7 @@ class BudgetService:
         self,
         store_name: str,
         purchased_at: datetime,
-        items: list[dict],           # [{'product': Product, 'qty': 1.0, 'price': 99.9}]
+        items: list[dict],  # [{'product': Product, 'qty': 1.0, 'price': 99.9}]
         transaction_ids: list[int] = None,
     ) -> Check:
         """Создать чек с позициями и привязать к транзакциям.
@@ -114,7 +122,8 @@ class BudgetService:
         Args:
             store_name: Название магазина.
             purchased_at: Дата и время покупки.
-            items: Список позиций {'product': Product, 'qty': float, 'price': float}.
+            items: Список позиций {'product': Product, 'qty': float,
+            'price': float}.
             transaction_ids: ID транзакций, к которым привязан чек.
         """
         check = Check(store_name=store_name, purchased_at=purchased_at)
@@ -144,7 +153,12 @@ class BudgetService:
         """Расходы и доходы по категориям (сводка)."""
         rows = self.uow.categories.get_spending_by_category()
         return [
-            {'category': r.name, 'type': r.type, 'total': r.total, 'count': r.txn_count}
+            {
+                'category': r.name,
+                'type': r.type,
+                'total': r.total,
+                'count': r.txn_count,
+            }
             for r in rows
         ]
 
@@ -184,7 +198,7 @@ class BudgetService:
             for r in rows
         ]
 
-    def update_account_balance(self, account_id:int, amount:float)->None:
+    def update_account_balance(self, account_id: int, amount: float) -> None:
         """Обновить баланс счета."""
-        account=self.uow.accounts.get(account_id)
-        account.balance=amount
+        account = self.uow.accounts.get(account_id)
+        account.balance = amount

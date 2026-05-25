@@ -1,13 +1,12 @@
 from datetime import datetime
 
-from sqlalchemy import func, select
-from sqlalchemy.orm import Session, joinedload
-
 from infrastructure.database.models.account import Account
 from infrastructure.database.models.category import Category
 from infrastructure.database.models.recipient import Recipient
 from infrastructure.database.models.transaction import Transaction
 from infrastructure.database.repository.base_repository import BaseRepository
+from sqlalchemy import func, select
+from sqlalchemy.orm import Session, joinedload
 
 
 class TransactionRepository(BaseRepository[Transaction]):
@@ -23,7 +22,8 @@ class TransactionRepository(BaseRepository[Transaction]):
     def find_by_type(self, txn_type: str) -> list[Transaction]:
         """WHERE — найти транзакции по типу (income / expense / transfer)."""
         return (
-            self.session.execute(
+            self.session
+            .execute(
                 select(Transaction)
                 .where(Transaction.type == txn_type)
                 .order_by(Transaction.date.desc())
@@ -37,7 +37,8 @@ class TransactionRepository(BaseRepository[Transaction]):
     ) -> list[Transaction]:
         """WHERE — транзакции за указанный период, свежие первыми."""
         return (
-            self.session.execute(
+            self.session
+            .execute(
                 select(Transaction)
                 .where(Transaction.date >= start, Transaction.date <= end)
                 .order_by(Transaction.date.desc())
@@ -49,9 +50,12 @@ class TransactionRepository(BaseRepository[Transaction]):
     def find_expenses_above(self, amount: float) -> list[Transaction]:
         """WHERE + ORDER BY — расходы дороже указанной суммы."""
         return (
-            self.session.execute(
+            self.session
+            .execute(
                 select(Transaction)
-                .where(Transaction.type == 'expense', Transaction.amount > amount)
+                .where(
+                    Transaction.type == 'expense', Transaction.amount > amount
+                )
                 .order_by(Transaction.amount.desc())
             )
             .scalars()
@@ -86,7 +90,8 @@ class TransactionRepository(BaseRepository[Transaction]):
         ).all()
 
     def get_with_relations(self, txn_id: int) -> Transaction | None:
-        """JOIN (joinedload) — одна транзакция со всеми связанными объектами."""
+        """JOIN (joinedload) — одна транзакция со всеми связанными
+        объектами."""
         return self.session.execute(
             select(Transaction)
             .where(Transaction.id == txn_id)
@@ -127,7 +132,8 @@ class TransactionRepository(BaseRepository[Transaction]):
         relationship.has() → транслируется в EXISTS подзапрос.
         """
         return (
-            self.session.execute(
+            self.session
+            .execute(
                 select(Transaction).where(
                     Transaction.category.has(Category.type == 'expense')
                 )

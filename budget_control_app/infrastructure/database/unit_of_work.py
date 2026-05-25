@@ -1,11 +1,20 @@
-from sqlalchemy.orm import Session
-
-from infrastructure.database.repository.account_repository import AccountRepository
-from infrastructure.database.repository.category_repository import CategoryRepository
-from infrastructure.database.repository.product_repository import ProductRepository
+from infrastructure.database.repository.account_repository import (
+    AccountRepository,
+)
+from infrastructure.database.repository.category_repository import (
+    CategoryRepository,
+)
 from infrastructure.database.repository.check_repository import CheckRepository
-from infrastructure.database.repository.recipient_repository import RecipientRepository
-from infrastructure.database.repository.transaction_repository import TransactionRepository
+from infrastructure.database.repository.product_repository import (
+    ProductRepository,
+)
+from infrastructure.database.repository.recipient_repository import (
+    RecipientRepository,
+)
+from infrastructure.database.repository.transaction_repository import (
+    TransactionRepository,
+)
+from sqlalchemy.orm import Session
 
 
 class UnitOfWork:
@@ -45,7 +54,8 @@ class UnitOfWork:
     def session(self) -> Session:
         if self._session is None:
             raise RuntimeError(
-                'UnitOfWork не активен. Используйте контекстный менеджер (with).'
+                'UnitOfWork не активен. '
+                'Используйте контекстный менеджер (with).'
             )
         return self._session
 

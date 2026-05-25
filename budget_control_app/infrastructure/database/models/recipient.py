@@ -1,7 +1,6 @@
+from infrastructure.database.base import Base  # noqa
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from infrastructure.database.base import Base
 
 
 class Recipient(Base):
@@ -15,7 +14,7 @@ class Recipient(Base):
     note: Mapped[str | None] = mapped_column(String(255))
 
     # при удалении получателя — транзакции остаются, recipient_id → NULL
-    transactions: Mapped[list['Transaction']] = relationship(
+    transactions: Mapped[list['Transaction']] = relationship(  # noqa
         back_populates='recipient',
     )
 

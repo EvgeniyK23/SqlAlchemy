@@ -1,9 +1,8 @@
-from sqlalchemy import func, select
-from sqlalchemy.orm import Session
-
 from infrastructure.database.models.recipient import Recipient
 from infrastructure.database.models.transaction import Transaction
 from infrastructure.database.repository.base_repository import BaseRepository
+from sqlalchemy import func, select
+from sqlalchemy.orm import Session
 
 
 class RecipientRepository(BaseRepository[Recipient]):
@@ -38,7 +37,8 @@ class RecipientRepository(BaseRepository[Recipient]):
     def get_recipients_with_transfers(self) -> list[Recipient]:
         """EXISTS / any() — получатели, которым был хотя бы один перевод."""
         return (
-            self.session.execute(
+            self.session
+            .execute(
                 select(Recipient).where(
                     Recipient.transactions.any(Transaction.type == 'transfer')
                 )

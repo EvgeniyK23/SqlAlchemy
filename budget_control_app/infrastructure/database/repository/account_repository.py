@@ -1,9 +1,8 @@
-from sqlalchemy import select
-from sqlalchemy.orm import Session, selectinload
-
 from infrastructure.database.models.account import Account
 from infrastructure.database.models.transaction import Transaction
 from infrastructure.database.repository.base_repository import BaseRepository
+from sqlalchemy import select
+from sqlalchemy.orm import Session, selectinload
 
 
 class AccountRepository(BaseRepository[Account]):
@@ -27,12 +26,14 @@ class AccountRepository(BaseRepository[Account]):
         ).scalar_one_or_none()
 
     def get_accounts_with_expenses(self) -> list[Account]:
-        """EXISTS / any() — счета, у которых есть хотя бы одна транзакция-расход.
+        """EXISTS / any() — счета, у которых есть хотя бы одна
+        транзакция-расход.
 
         Использует relationship.any() → транслируется в EXISTS подзапрос.
         """
         return (
-            self.session.execute(
+            self.session
+            .execute(
                 select(Account).where(
                     Account.transactions.any(Transaction.type == 'expense')
                 )
@@ -41,7 +42,9 @@ class AccountRepository(BaseRepository[Account]):
             .all()
         )
 
-    def update_balance(self, account_id: int, new_balance: float) -> Account | None:
+    def update_balance(
+        self, account_id: int, new_balance: float
+    ) -> Account | None:
         """Обновить баланс счёта."""
         account = self.get(account_id)
         if account:
